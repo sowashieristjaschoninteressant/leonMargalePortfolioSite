@@ -82,7 +82,7 @@ export class RavenSystem implements System {
 
             const bird = this.spawn(xp, yp, ctx);
 
-            bird.flyTo({ x: this.canvas.width / 2, y: this.canvas.height / 2 });
+            bird.flyTo(this.getRandomPoint());
             
         }, timeout)
     }
