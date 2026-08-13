@@ -13,7 +13,7 @@ import { animationProps } from "@/src/engine/animation";
     sprite: Sprite;
 }
  */
-export function createBird(ctx:CanvasRenderingContext2D, xp:number, yp:number, assetImg:HTMLImageElement):Bird{
+export function createBird(xp:number, yp:number, assetImg:HTMLImageElement):Bird{
 
 
     const animations:animationProps[] =[
@@ -21,13 +21,12 @@ export function createBird(ctx:CanvasRenderingContext2D, xp:number, yp:number, a
         {with: 16, height: 16, x : 0, y :0, frameCount : 4, timeDelta:0.25}
     ];
 
-    const sprite = new Sprite(0.1, assetImg, ctx);
+    const sprite = new Sprite(0.1, assetImg);
     sprite.add_animation(animations[0], "RUN");
     sprite.add_animation(animations[1], "IDLE");
     const birdConf:birdProps  = {
         x: xp,
         y:yp,
-        ctx: ctx,
         velocity: 200,
         sprite: sprite,
     }

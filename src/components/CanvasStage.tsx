@@ -6,12 +6,14 @@ import { FracTree } from "@/src/features/tree/tree";
 import { Rain } from "@/src/features/rain/Rain";
 import { loadImage } from "../utils/loader";
 import { createBird } from "../shared/factories/birdFactory";
+import { MeshObject, System } from "../engine/types";
+import { RavenSystem } from "../features/birds/RavenSystem";
 
-export default  function CanvasStage() {
+export default function CanvasStage() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    
 
-    useEffect( ()  => {
+
+    useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
@@ -26,23 +28,22 @@ export default  function CanvasStage() {
         resize();
         window.addEventListener("resize", resize);
 
-        (async ()=> {
+        (async () => {
             const assetImg = await loadImage("ravenTEST.png");
 
-            const bird = createBird(ctx, window.innerWidth / 4, window.innerHeight - 200, assetImg);
-            bird.flyTo({x: window.innerWidth / 2, y: window.innerHeight  / 2 });
-
-              const objects = [
-            new Rain(1000),
-            new FracTree(0.58, window.innerWidth / 2, window.innerHeight),
-            bird
+            const world: MeshObject[] = [
+                new Rain(1000),
+                new FracTree(0.58, window.innerWidth / 2, window.innerHeight),
             ];
-            
-        const renderer = new Renderer(ctx, objects);
 
-        renderer.render();
+            
+            const ravenSystem = new RavenSystem(world, assetImg, canvas);
+            const renderer = new Renderer(ctx, world, [ravenSystem]);
+
+            ravenSystem.registerSpawn(ctx);
+            renderer.render();
         })();
-       
+
         return () => {
             window.removeEventListener("resize", resize);
         };

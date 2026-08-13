@@ -4,9 +4,13 @@ export interface MeshObject {
     update(dt:number): void;
 }
 
+export interface System{
+    update(dt:number):void;
+}
 
 export type point2D = {
     x:number;
     y:number;
     angle?:number;
 }
+
