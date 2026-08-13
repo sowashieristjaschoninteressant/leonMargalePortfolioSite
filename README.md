@@ -1,1 +1,2 @@
-<img width="800" height="452" alt="grafik" src="https://github.com/user-attachments/assets/220ee53d-17b8-4ed8-958f-37cf587a7fd0" />
+<img width="800" height="452" alt="Bildschirmaufnahme2026-08-13um19 09 56-ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/d32f543d-402a-44a9-b3cd-e72738f2860f" />
+
