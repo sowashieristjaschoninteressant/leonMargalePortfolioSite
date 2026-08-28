@@ -1,6 +1,6 @@
 import { MeshObject, point2D, System } from "@/src/engine/types";
 import { createBird } from "@/src/shared/factories/birdFactory";
-import { getRandomInt } from "@/src/shared/math";
+import { getRandomSpawnX, getRandomSpawnY, getRandomPoint } from "@/src/shared/math";
 import { time } from "console";
 import { Bird } from "./Bird";
 
@@ -16,46 +16,10 @@ export class RavenSystem implements System {
 
     update(dt: number) {
 
-        for(const bird of this.birds){
-
-            if(bird.isFlying())
-                continue;
-
-            bird.nextMovementTimer -= dt;
-
-
-            if( bird.nextMovementTimer <= 0){
-
-                let goal = this.getRandomPoint();
-
-                bird.flyTo(goal);
-            }
-        }
-
+        this.birds.map(bird => bird.update(dt));
+        this.birds = this.birds.filter(b => b.birdState != "DEATH");
 
         return;
-    }
-
-    private getRandomSpawnY() {
-        const height = this.canvas.height;
-
-        return getRandomInt(0, height);
-    }
-
-    private getRandomSpawnX() {
-        const width = this.canvas.width;
-        let first = getRandomInt(-20, 0);
-        let last = getRandomInt(width, width + 50);
-
-        return Math.random() > 0.5 ? first : last;
-    }
-
-    private getRandomPoint(): point2D {
-
-        return {
-            x: getRandomInt(50, this.canvas.width - 50),
-            y: getRandomInt(50, this.canvas.height - 100)
-        };
     }
 
     private spawn(xp: number, yp: number, ctx: CanvasRenderingContext2D) {
@@ -76,13 +40,13 @@ export class RavenSystem implements System {
                 return;
             }
 
-            let xp = this.getRandomSpawnX();
-            let yp = this.getRandomSpawnY();
+            let xp = getRandomSpawnX(this.canvas);
+            let yp = getRandomSpawnY(this.canvas);
 
 
             const bird = this.spawn(xp, yp, ctx);
 
-            bird.flyTo(this.getRandomPoint());
+            bird.flyTo(getRandomPoint(this.canvas));
             
         }, timeout)
     }

@@ -29,7 +29,8 @@ export function createBird(xp:number, yp:number, assetImg:HTMLImageElement):Bird
         y:yp,
         velocity: 200,
         sprite: sprite,
-    }
+        maxMovements: 5,
+    };
 
     const bird:Bird = new Bird(birdConf);
 
