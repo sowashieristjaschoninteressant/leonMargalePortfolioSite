@@ -1,4 +1,5 @@
 export interface MeshObject {
+    id:number;
     setCtx(ctx: CanvasRenderingContext2D): void;
     draw(dt:number): void;
     update(dt:number): void;

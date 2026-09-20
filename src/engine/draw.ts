@@ -6,7 +6,7 @@ export function drawLine(ctx: CanvasRenderingContext2D, start:point2D, end:point
     ctx.moveTo(Math.round(start.x) + 0.5, Math.round(start.y) + 0.5);
     ctx.lineTo(Math.round(end.x) + 0.5, Math.round(end.y) + 0.5);
     ctx.stroke();
-
+    
     return;
 }
 

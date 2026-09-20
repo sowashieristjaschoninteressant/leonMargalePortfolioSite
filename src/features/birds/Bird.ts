@@ -1,8 +1,8 @@
 import { Sprite } from "@/src/engine/sprite";
 import { MeshObject, point2D } from "@/src/engine/types";
-import { getRandomInt, getRandomPoint } from "@/src/shared/math";
-import { loadImage } from "@/src/utils/loader";
-import { randomInt } from "crypto";
+import { getRandomInt, getRandomPoint, getExitPoint} from "@/src/shared/math";
+import { Bounds } from "@/src/engine/bounds";
+import { randomUUID } from "crypto";
 
 export type birdProps = {
     y: number;
@@ -21,9 +21,11 @@ type BirdState = "FLYING_TO_POINT" | "PERCHING" | "DEATH" | "EXITING";
 
 export class Bird implements MeshObject {
 
+    id:number = Math.random();
     ctx: CanvasRenderingContext2D | null = null;
     x: number;
     y: number;
+    bounds: Bounds;
     velocity: number;
     epsilon: number = 2;
     sprite?: Sprite;
@@ -36,18 +38,15 @@ export class Bird implements MeshObject {
         goalPoint: { x: 0, y: 0 },
     };
 
-    constructor(birdConf: birdProps) {
+    constructor(birdConf: birdProps, bounds:Bounds) {
         this.x = birdConf.x;
         this.y = birdConf.y;
         this.velocity = birdConf.velocity;
         this.sprite = birdConf.sprite;
         this.maxMotion = birdConf.maxMovements;
-
+        this.bounds = bounds;
     }
 
-    isFlying() {
-        return this.birdState == "FLYING_TO_POINT";
-    }
 
     private moveTowardsGoal(dt: number) {
 
@@ -80,58 +79,47 @@ export class Bird implements MeshObject {
     update(dt: number) {
 
         switch (this.birdState) {
-            case "DEATH":
-
-                break;
             case "EXITING":
+               
                 this.moveTowardsGoal(dt);
                 if(!this.motionState.hasGoal){
-                    this.birdState = "DEATH"; // :(
+                    this.birdState = "DEATH";
                 }
 
                 break;
             case "PERCHING":
-
                 this.nextMovementTimer -= dt;
 
                 if (this.nextMovementTimer <= 0) {
-                    let goal = getRandomPoint();
-
-                    if (this.maxMotion == this.currentMotion){
+                    let goal:point2D;
+                   
+                    if (this.maxMotion <= this.currentMotion){
                         this.birdState = "EXITING";
-                        goal = 
-                    }   
-                        
-                        
-                    
-                    
+                        goal = getExitPoint(this.bounds);
+                    }else{
+                        goal = getRandomPoint(this.bounds);
+                        this.birdState = "FLYING_TO_POINT";
+                    }
+
                     this.flyTo(goal);
                     this.currentMotion++;
+
                 }
                 break;
             case "FLYING_TO_POINT":
                 this.moveTowardsGoal(dt);
-
                 if (!this.motionState.hasGoal) {
                     this.birdState = "PERCHING";
                     this.nextMovementTimer = getRandomInt(5, 10);
                 }
 
                 break;
-
         }
-
-
-
-
-
-
     }
 
     flyTo(pos: point2D) {
         this.motionState.hasGoal = true;
         this.motionState.goalPoint = pos;
-        this.birdState = "FLYING_TO_POINT";
     }
 
     setCtx(ctx: CanvasRenderingContext2D) {
@@ -139,8 +127,7 @@ export class Bird implements MeshObject {
     }
 
     draw(dt: number) {
-
-        this.birdState == "FLYING_TO_POINT" ? this.sprite?.setState("RUN") : this.sprite?.setState("IDLE");
+        this.birdState == "FLYING_TO_POINT" || this.birdState == "EXITING" ? this.sprite?.setState("RUN") : this.sprite?.setState("IDLE");
         this.sprite?.draw(this.ctx!, this.x, this.y, dt);
     }
 

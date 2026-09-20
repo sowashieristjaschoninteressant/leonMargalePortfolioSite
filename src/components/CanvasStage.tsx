@@ -5,13 +5,12 @@ import { Renderer } from "@/src/engine/render";
 import { FracTree } from "@/src/features/tree/tree";
 import { Rain } from "@/src/features/rain/Rain";
 import { loadImage } from "../utils/loader";
-import { createBird } from "../shared/factories/birdFactory";
+import { Bounds } from "../engine/bounds";
 import { MeshObject, System } from "../engine/types";
 import { RavenSystem } from "../features/birds/RavenSystem";
 
 export default function CanvasStage() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -36,8 +35,8 @@ export default function CanvasStage() {
                 new FracTree(0.58, window.innerWidth / 2, window.innerHeight),
             ];
 
-            
-            const ravenSystem = new RavenSystem(world, assetImg, canvas);
+            const bounds = new Bounds(canvas.height, canvas.width);
+            const ravenSystem = new RavenSystem(world, assetImg, bounds);
             const renderer = new Renderer(ctx, world, [ravenSystem]);
 
             ravenSystem.registerSpawn(ctx);

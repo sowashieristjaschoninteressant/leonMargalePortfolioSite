@@ -44,20 +44,17 @@ export class Renderer {
         this.before = now;
 
         dt = Math.min(dt, 0.033);
+
         this.cleanup();
-
-        for (const object of this.meshObjects) {
-            object.update(dt)
-            object.draw(dt);
-
-        }
 
         for( const system of this.systems){
             system.update(dt);
         }
 
-
-
+        for (const object of this.meshObjects) {
+            object.update(dt)
+            object.draw(dt);
+        }
 
         requestAnimationFrame(() => this.render());
     }

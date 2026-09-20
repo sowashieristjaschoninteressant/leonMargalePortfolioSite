@@ -1,7 +1,7 @@
 'use client'
 import { Bird, birdProps  } from "@/src/features/birds/Bird";
 import { Sprite } from "@/src/engine/sprite";
-import { loadImage } from "@/src/utils/loader";
+import { Bounds } from "@/src/engine/bounds";
 import { animationProps } from "@/src/engine/animation";
 /**
  *
@@ -13,7 +13,7 @@ import { animationProps } from "@/src/engine/animation";
     sprite: Sprite;
 }
  */
-export function createBird(xp:number, yp:number, assetImg:HTMLImageElement):Bird{
+export function createBird(xp:number, yp:number, assetImg:HTMLImageElement, bounds:Bounds):Bird{
 
 
     const animations:animationProps[] =[
@@ -29,10 +29,10 @@ export function createBird(xp:number, yp:number, assetImg:HTMLImageElement):Bird
         y:yp,
         velocity: 200,
         sprite: sprite,
-        maxMovements: 5,
+        maxMovements: 2,
     };
 
-    const bird:Bird = new Bird(birdConf);
+    const bird:Bird = new Bird(birdConf, bounds);
 
     return bird;
 }

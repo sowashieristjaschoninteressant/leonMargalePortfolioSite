@@ -1,52 +1,66 @@
 import { MeshObject, point2D, System } from "@/src/engine/types";
 import { createBird } from "@/src/shared/factories/birdFactory";
 import { getRandomSpawnX, getRandomSpawnY, getRandomPoint } from "@/src/shared/math";
-import { time } from "console";
 import { Bird } from "./Bird";
-
+import { Bounds } from "@/src/engine/bounds";
+import { kill } from "process";
 export class RavenSystem implements System {
-    private birdCount: number = 0;
-    private birds: Bird[] = [];
+    private ravens: Bird[] = [];
 
     constructor(
         private world: MeshObject[],
         private ravenImage: HTMLImageElement,
-        private canvas: HTMLCanvasElement,
+        private bounds: Bounds,
     ) { }
+    
+    private killRavens(){
 
-    update(dt: number) {
+        for(let i = this.ravens.length - 1; i >= 0; i-- ){
 
-        this.birds.map(bird => bird.update(dt));
-        this.birds = this.birds.filter(b => b.birdState != "DEATH");
+            const raven = this.ravens[i];
 
-        return;
+            if(raven.birdState != "DEATH")
+                continue;
+
+            this.ravens.splice(i, 1);
+            let worldIndex = this.world.indexOf(raven);
+
+            if(worldIndex !== -1 ){
+                this.world.splice(worldIndex, 1);
+            }
+        }
+
     }
 
     private spawn(xp: number, yp: number, ctx: CanvasRenderingContext2D) {
-        const bird = createBird(xp, yp, this.ravenImage);
+        const bird = createBird(xp, yp, this.ravenImage, this.bounds);
         bird.setCtx(ctx);
         this.world.push(bird);
-        this.birds.push(bird);
-        this.birdCount++;
+        this.ravens.push(bird);
         return bird;
+    }
+
+    update(dt: number) {
+        
+        this.killRavens();
+        return;
     }
 
     registerSpawn(ctx: CanvasRenderingContext2D) {
 
-        const timeout = 3000;
+        const timeout = 10000;
         setInterval(() => {
 
-            if (this.birdCount >= 10) {
+            if (this.ravens.length >= 3) {
                 return;
             }
 
-            let xp = getRandomSpawnX(this.canvas);
-            let yp = getRandomSpawnY(this.canvas);
-
+            let xp = getRandomSpawnX(this.bounds);
+            let yp = getRandomSpawnY(this.bounds);
 
             const bird = this.spawn(xp, yp, ctx);
 
-            bird.flyTo(getRandomPoint(this.canvas));
+            bird.flyTo(getRandomPoint(this.bounds));
             
         }, timeout)
     }
