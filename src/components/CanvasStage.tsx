@@ -8,6 +8,7 @@ import { loadImage } from "../utils/loader";
 import { Bounds } from "../engine/bounds";
 import { MeshObject, System } from "../engine/types";
 import { RavenSystem } from "../features/birds/RavenSystem";
+import { PerchRegistry } from "../features/tree/PerchProvider";
 
 export default function CanvasStage() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -29,14 +30,14 @@ export default function CanvasStage() {
 
         (async () => {
             const assetImg = await loadImage("ravenTEST.png");
-
+            const registry = new PerchRegistry();
             const world: MeshObject[] = [
                 new Rain(1000),
-                new FracTree(0.58, window.innerWidth / 2, window.innerHeight),
+                new FracTree(0.58, window.innerWidth / 2, window.innerHeight, registry),
             ];
 
             const bounds = new Bounds(canvas.height, canvas.width);
-            const ravenSystem = new RavenSystem(world, assetImg, bounds);
+            const ravenSystem = new RavenSystem(world, assetImg, bounds, registry);
             const renderer = new Renderer(ctx, world, [ravenSystem]);
 
             ravenSystem.registerSpawn(ctx);
@@ -53,12 +54,13 @@ export default function CanvasStage() {
             ref={canvasRef}
             style={{
                 position: "fixed",
-                top: 0,
-                left: 0,
+                inset: 0,
                 width: "100vw",
                 height: "100vh",
                 display: "block",
                 background: "#0D1164",
+                zIndex: 0,
+                pointerEvents: "none",
             }}
         />
     );

@@ -1,9 +1,17 @@
 import { drawLine, calculateNewPoint } from "@/src/engine/draw";
 import { MeshObject, point2D } from "@/src/engine/types";
 
-export class FracTree implements MeshObject{
+import { IPerchProvider, Perch } from "./IPerchProvider";
 
-    id:number = Math.random();
+type Branch = {
+    start: point2D;
+    end: point2D;
+    level: number;
+}
+
+export class FracTree implements MeshObject {
+
+    id: number = Math.random();
     ctx: CanvasRenderingContext2D | null = null;
     xPos: number;
     yPos: number;
@@ -11,12 +19,29 @@ export class FracTree implements MeshObject{
     bend: number = 0.1;
     direction: boolean = true;
     firstLineL: number = 10;
-
     currentLineLength: number[] = [];
+    branches: Branch[] = [];
     allPoints: point2D[] = [];
+    private perchRegistry: IPerchProvider;
+    private perchesRegistered: boolean = false;
 
-    constructor(baseangle:number, xPos:number, yPos:number) {
-       
+    // tree stuff fck
+    private LEVEL_COUNT = 12;
+    private MAX_TRUNK_LENGTH = 300;
+    private INITIAL_BRANCH_LENGTH = 150;
+    private BRANCH_SCALE = 0.7;
+    private TRUNK_GROTH_STEP = 5;
+    private BRANCH_GROWTH_STEP = 4;
+
+    private compression = 0;
+    private compressionVelocity = 0;
+
+    private readonly SPRING_STRENGTH = 90;
+    private readonly SPRING_DAMPING = 10;
+    private readonly IMPACT_STRENGTH = 0.12;
+
+
+    constructor(baseangle: number, xPos: number, yPos: number, perchRegistry: IPerchProvider) {
         this.bend = 0.1;
         this.ctx;
         this.xPos = xPos;
@@ -28,134 +53,268 @@ export class FracTree implements MeshObject{
         for (let i = 0; i < 12; i++) {
             this.currentLineLength[i] = 0;
         }
-        this.allPoints = [];
+        this.perchRegistry = perchRegistry;
     }
 
     setCtx(ctx: CanvasRenderingContext2D): void {
         this.ctx = ctx;
     }
 
-    incAngle(angle:number, baseangle:number, bend:number) { return angle + baseangle + bend };
-    decAngle(angle:number, baseangle:number, bend:number) { return angle - baseangle - bend };
+    private incAngle(angle: number, baseangle: number, bend: number) { return angle + baseangle + bend };
+    private decAngle(angle: number, baseangle: number, bend: number) { return angle - baseangle - bend };
 
-   allLinesDone() {
-    for (let i = 0; i < this.currentLineLength.length; i++) {
-        if (this.currentLineLength[i] < this.getTargetLength(i)) {
-            return false; 
+    allLinesDone() {
+        for (let i = 0; i < this.currentLineLength.length; i++) {
+            if (this.currentLineLength[i] < this.getTargetLength(i)) {
+                return false;
+            }
         }
-    }
-    return true;
+        return true;
 
     }
 
-    getTargetLength(level:number){
-
-        let baselength = 150;
-        for(let i = 0; i < level; i++){
-            baselength *= 0.7;
-        }
-        return baselength;
-
+    getTargetLength(level: number) {
+        return this.INITIAL_BRANCH_LENGTH * Math.pow(this.BRANCH_SCALE, level);
     }
 
-    update(dt:number){
-        
-    }
-
-
-    checkAngle() {
-        if (this.baseangle > Math.PI / 2 - 0.1) {
-            (window as any)._stopped = true;
-            this.direction = false;
-            this.baseangle -= 0.01;
-        };
-
-        if (this.baseangle < 0.0) {
-            this.direction = true
-        };
-    }
-
-    checkDirection() {
-        if (this.direction) {
-            this.baseangle += 0.01;
+    isfullyGrown(): boolean {
+        if (this.firstLineL < this.MAX_TRUNK_LENGTH) {
+            return false;
         }
 
-        if (!this.direction) {
-            this.baseangle -= 0.01;
-        }
+        return this.currentLineLength.every(
+            (length, level) => length >= this.getTargetLength(level)
+        );
     }
 
+    private updateReaction(dt: number): void {
+        // Große Framedrops abfangen
+        dt = Math.min(dt, 0.05);
 
-    drawTree(baseangle:number) {
+        const landingImpact =
+            this.perchRegistry.consumeLandingImpact();
 
-        const start:point2D = {x: this.xPos, y : this.yPos, angle : 0};
-        const root = calculateNewPoint(start, 0, this.firstLineL);
-        let lineLength = 150;
-        let endPoints = [root];
-        
-        this.allPoints.length = 0x0;
-        
-        drawLine(this.ctx!, start, root);
+        if (landingImpact > 0) {
+            this.compressionVelocity +=
+                landingImpact * this.IMPACT_STRENGTH;
+        }
 
-        if (this.firstLineL < 300) {
-            this.firstLineL = this.firstLineL + 5;
+        const acceleration =
+            -this.SPRING_STRENGTH * this.compression
+            - this.SPRING_DAMPING * this.compressionVelocity;
+
+        this.compressionVelocity += acceleration * dt;
+        this.compression += this.compressionVelocity * dt;
+
+        // Verhindert extreme Verformungen
+        this.compression = Math.max(
+            -0.02,
+            Math.min(this.compression, 0.08)
+        );
+    }
+
+    private updateGrowth(): void {
+        if (this.firstLineL < this.MAX_TRUNK_LENGTH) {
+            this.firstLineL = Math.min(
+                this.firstLineL + this.TRUNK_GROTH_STEP,
+                this.MAX_TRUNK_LENGTH
+            );
+
             return;
         }
-         
-        for (let i = 0; i < 12; i++) {
 
-            let temp = [];
+        for (let level = 0; level < this.LEVEL_COUNT; level++) {
+            const targetLength = this.getTargetLength(level);
 
-            for (let point of endPoints) {
+            if (this.currentLineLength[level] < targetLength) {
+                this.currentLineLength[level] = Math.min(
+                    this.currentLineLength[level] + this.BRANCH_GROWTH_STEP,
+                    targetLength
+                );
 
-                let p1, p2;              
-                let leftAngle = this.decAngle(point.angle!, baseangle, this.bend);
-                let rightAngle = this.incAngle(point.angle!, baseangle, this.bend);
-
-                p1 = calculateNewPoint(point, leftAngle, this.currentLineLength[i]);
-                p2 = calculateNewPoint(point, rightAngle, this.currentLineLength[i]);
-
-                drawLine(this.ctx!, point, p1);
-                drawLine(this.ctx!, point, p2);
-
-                temp.push(p1, p2);
-                this.allPoints.push(p1, p2);
+                // Nur eine Ebene pro Frame wachsen lassen
+                return;
             }
+        }
+    }
 
-            if (this.currentLineLength[i] < lineLength) {
-                this.currentLineLength[i] = this.currentLineLength[i] + 4;
-                endPoints = temp;
+    private registerPerches() {
+
+        if (this.perchesRegistered || !this.isfullyGrown()) {
+            return;
+        }
+        const maximumPerches = Math.min(20, this.branches.length);
+
+        for (let branchIndex = 0; branchIndex < maximumPerches; branchIndex++) {
+
+            const branch = this.branches[branchIndex];
+            this.perchRegistry.createPerch(branch.end, branchIndex);
+        }
+
+        this.perchesRegistered = true;
+    }
+
+    private rebuildGeometry(baseangle: number): void {
+        this.branches.length = 0;
+        this.allPoints.length = 0;
+
+        const start: point2D = {
+            x: this.xPos,
+            y: this.yPos,
+            angle: 0
+        };
+
+        const root = calculateNewPoint(
+            start,
+            0,
+            this.firstLineL
+        );
+
+        this.branches.push({
+            start,
+            end: root,
+            level: -1
+        });
+
+        if (this.firstLineL < this.MAX_TRUNK_LENGTH) {
+            return;
+        }
+
+        let parentPoints: point2D[] = [root];
+
+        for (let level = 0; level < this.LEVEL_COUNT; level++) {
+            const branchLength = this.currentLineLength[level];
+
+            // Diese Ebene wächst noch nicht
+            if (branchLength <= 0) {
                 break;
             }
-            lineLength *= 0.7;
-            endPoints = temp;
+
+            const nextPoints: point2D[] = [];
+
+            for (const parent of parentPoints) {
+                const leftAngle = this.decAngle(
+                    parent.angle!,
+                    baseangle,
+                    this.bend
+                );
+
+                const rightAngle = this.incAngle(
+                    parent.angle!,
+                    baseangle,
+                    this.bend
+                );
+
+                const leftPoint = calculateNewPoint(
+                    parent,
+                    leftAngle,
+                    branchLength
+                );
+
+                const rightPoint = calculateNewPoint(
+                    parent,
+                    rightAngle,
+                    branchLength
+                );
+
+                this.branches.push(
+                    {
+                        start: parent,
+                        end: leftPoint,
+                        level
+                    },
+                    {
+                        start: parent,
+                        end: rightPoint,
+                        level
+                    }
+                );
+
+                nextPoints.push(leftPoint, rightPoint);
+                this.allPoints.push(leftPoint, rightPoint);
+            }
+
+            parentPoints = nextPoints;
+
+            // Tiefere Ebenen existieren erst, wenn diese fertig ist
+            if (branchLength < this.getTargetLength(level)) {
+                break;
+            }
         }
-
-
-
     }
 
-    getPerches(){
-        return this.allPoints;
-    }
-
-    drawLandingPoints(){
-        for(const point of this.allPoints){
+    drawLandingPoints() {
+        for (const point of this.allPoints) {
             this.ctx!.beginPath();
-            this.ctx!.arc(point.x, point.y, 4,0,Math.PI * 2);
+            this.ctx!.arc(point.x, point.y, 4, 0, Math.PI * 2);
             this.ctx!.fillStyle = "red";
             this.ctx!.fill();
-            
         }
     }
 
-    draw(dt:number) {
-        if(!this.ctx)
+    private drawGeometry(): void {
+        if (!this.ctx) {
+            return;
+        }
+
+        const verticalScale = 1 - this.compression;
+
+        this.ctx.save();
+
+        // Skalierung erfolgt relativ zur Baumwurzel
+        this.ctx.translate(this.xPos, this.yPos);
+        this.ctx.scale(1, verticalScale);
+        this.ctx.translate(-this.xPos, -this.yPos);
+
+        for (const branch of this.branches) {
+            drawLine(this.ctx, branch.start, branch.end);
+        }
+
+        this.ctx.restore();
+    }
+
+    private updatePerchPositions(): void {
+        const verticalScale = 1 - this.compression;
+
+        for (let branchIndex = 0; branchIndex < 20; branchIndex++) {
+            const branch = this.branches[branchIndex];
+
+            if (!branch) {
+                break;
+            }
+
+            const transformedPosition: point2D = {
+                ...branch.end,
+                y: this.yPos +
+                    (branch.end.y - this.yPos) * verticalScale
+            };
+
+            this.perchRegistry.updatePerchPosition(
+                branchIndex,
+                transformedPosition
+            );
+        }
+    }
+
+    update(dt: number) {
+        this.updateGrowth();
+        this.updateReaction(dt);
+        this.rebuildGeometry(this.baseangle);
+
+        if (this.isfullyGrown() && !this.perchesRegistered) {
+            this.registerPerches();
+        }
+
+        this.updatePerchPositions();
+    }
+
+    draw(dt: number) {
+        if (!this.ctx)
             return;
 
         this.ctx.fillText(`Angle: ${this.baseangle}`, 20, 20, 500);
-        this.drawTree(this.baseangle);
-        this.drawLandingPoints();
+        this.drawGeometry();
+        // this.drawLandingPoints();
     }
 
 }

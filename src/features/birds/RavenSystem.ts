@@ -4,6 +4,7 @@ import { getRandomSpawnX, getRandomSpawnY, getRandomPoint } from "@/src/shared/m
 import { Bird } from "./Bird";
 import { Bounds } from "@/src/engine/bounds";
 import { kill } from "process";
+import { IPerchProvider } from "../tree/IPerchProvider";
 export class RavenSystem implements System {
     private ravens: Bird[] = [];
 
@@ -11,6 +12,7 @@ export class RavenSystem implements System {
         private world: MeshObject[],
         private ravenImage: HTMLImageElement,
         private bounds: Bounds,
+        private perchRegistry:IPerchProvider
     ) { }
     
     private killRavens(){
@@ -33,7 +35,7 @@ export class RavenSystem implements System {
     }
 
     private spawn(xp: number, yp: number, ctx: CanvasRenderingContext2D) {
-        const bird = createBird(xp, yp, this.ravenImage, this.bounds);
+        const bird = createBird(xp, yp, this.ravenImage, this.bounds, this.perchRegistry);
         bird.setCtx(ctx);
         this.world.push(bird);
         this.ravens.push(bird);

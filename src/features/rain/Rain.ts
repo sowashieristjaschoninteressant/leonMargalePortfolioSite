@@ -5,6 +5,7 @@ import { Drop } from "./types";
 
 export class Rain implements MeshObject {
 
+    id: number = Math.random();
     ctx: CanvasRenderingContext2D | null;
     drops: Array<Drop>;
     DROP_COUNT: number;

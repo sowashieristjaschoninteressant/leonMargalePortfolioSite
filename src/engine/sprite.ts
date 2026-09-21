@@ -3,6 +3,7 @@ import { animationProps, Animation } from "./animation";
 
 
 type spriteState = "IDLE" | "RUN";
+type spriteAnchor = {x:number,y:number};
 
 export class Sprite{
     animationTime: number | null = null;
@@ -11,9 +12,11 @@ export class Sprite{
     state: spriteState = "RUN";
     reverse: boolean = false;
 
-     constructor(animationDelay: number, img:HTMLImageElement){
+     constructor(animationDelay: number, img:HTMLImageElement, private readonly anchor:spriteAnchor = {x:0,y:0}){
         this.animationTime = animationDelay;
         this.img = img;
+        
+        
 
     };
 
@@ -30,19 +33,24 @@ export class Sprite{
             return;
         }
 
+        const renderWidth = animation.width * scale;
+        const renderHeight = animation.height * scale;
+
+        const drawX = x - renderWidth * this.anchor.x;
+        const drawY = y - renderHeight * this.anchor.y;
+
+
          ctx?.save();
          ctx!.imageSmoothingEnabled = false;
         if(this.reverse){
-            ctx.translate(x + animation.width * scale, y);
+            ctx.translate(drawX + renderWidth, drawY);
             ctx.scale(-1,1);
-            ctx?.drawImage(this.img!, animation.x, animation.y, animation.width, animation.height,0,0,animation.width * scale, animation.height * scale );
+            ctx?.drawImage(this.img!, animation.x, animation.y, animation.width, animation.height,0,0,renderWidth, renderHeight );
         }else{
-            ctx?.drawImage(this.img!, animation.x, animation.y, animation.width, animation.height,x,y,animation.width * scale, animation.height * scale );
+            ctx?.drawImage(this.img!, animation.x, animation.y, animation.width, animation.height,drawX,drawY,renderWidth, renderHeight );
         }
       
-        
         animation.updateFrame(dt);
-
         ctx?.restore();
     };
 

@@ -1,0 +1,370 @@
+.overlay {
+    position: relative;
+    z-index: 10;
+    color: #f7f4ff;
+}
+
+.hero {
+    position: relative;
+    width: 100%;
+    height: 100svh;
+    min-height: 600px;
+    padding:
+        clamp(1.5rem, 5vw, 5rem)
+        clamp(1.5rem, 7vw, 7rem);
+}
+
+.heroInner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.heroPrimary {
+    position: absolute;
+    left: 0;
+    bottom: clamp(3rem, 12vh, 8rem);
+    max-width: min(650px, 75vw);
+}
+
+.eyebrow {
+    margin-bottom: 0.75rem;
+    color: #e5a1aa;
+    font-size: clamp(0.7rem, 1.2vw, 1rem);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.heroPrimary h1 {
+    margin: 0;
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 0.9;
+    letter-spacing: -0.06em;
+}
+
+.heroDescription {
+    max-width: 580px;
+    margin-top: 1.5rem;
+    color: rgb(247 244 255 / 75%);
+    font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+    line-height: 1.7;
+}
+
+.heroSecondary {
+    position: absolute;
+    top: clamp(3em, 10vh, 7rem);
+    transform: none;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    transform: translateY(-50%);
+    color: rgb(247 244 255 / 65%);
+    font-size: clamp(0.65rem, 1vw, 0.85rem);
+    letter-spacing: 0.15em;
+    line-height: 1.8;
+    text-transform: uppercase;
+}
+
+.scrollHint {
+    position: absolute;
+    right: 0;
+    bottom: 1rem;
+    color: inherit;
+    text-decoration: none;
+}
+
+.sectionSpacer {
+    height: 55vh;
+}
+
+
+
+
+
+
+
+
+.sectionSpacer {
+    height: clamp(20rem, 55vh, 42rem);
+}
+
+.section {
+    --accent: #e5a1aa;
+
+    position: relative;
+    width: min(760px, 54%);
+    padding: clamp(2rem, 5vw, 4.5rem);
+    overflow: hidden;
+    scroll-margin-top: 4rem;
+
+    color: #faf4e5;
+    background:
+        linear-gradient(
+            135deg,
+            rgb(6 9 45 / 88%),
+            rgb(13 17 100 / 72%)
+        );
+
+    border-top: 2px solid var(--accent);
+    border-right: 1px solid rgb(255 255 255 / 10%);
+    border-bottom: 1px solid rgb(255 255 255 / 10%);
+    border-left: 1px solid rgb(255 255 255 / 10%);
+
+    box-shadow: 0 2rem 6rem rgb(0 0 0 / 22%);
+    backdrop-filter: blur(14px);
+
+    clip-path: polygon(
+        0 0,
+        calc(100% - 22px) 0,
+        100% 22px,
+        100% 100%,
+        0 100%
+    );
+}
+
+.left {
+    margin-right: auto;
+}
+
+.right {
+    margin-left: auto;
+}
+
+.pink {
+    --accent: #e5a1aa;
+}
+
+.blue {
+    --accent: #9aacf2;
+}
+
+.green {
+    --accent: #7ad0ac;
+}
+
+.sectionHeader {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    align-items: start;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid rgb(255 255 255 / 14%);
+}
+
+.sectionNumber,
+.sectionLabel,
+.contentLabel,
+.projectNumber,
+.tags {
+    font-family: var(--font-mono), monospace;
+}
+
+.sectionNumber {
+    color: var(--accent);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+}
+
+.sectionLabel {
+    margin: 0 0 0.75rem;
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.sectionHeading {
+    max-width: 600px;
+    margin: 0;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 500;
+    line-height: 0.95;
+    letter-spacing: -0.055em;
+}
+
+.sectionContent {
+    padding-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.sectionContent p {
+    color: rgb(250 244 229 / 76%);
+    font-size: clamp(0.95rem, 1.2vw, 1.08rem);
+    line-height: 1.8;
+}
+
+/* About */
+
+.aboutGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(160px, 0.7fr);
+    gap: clamp(2rem, 5vw, 5rem);
+}
+
+.aboutText {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.contentLabel {
+    margin-bottom: 1rem;
+    color: var(--accent);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.skillList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.skillList li {
+    padding: 0.45rem 0.75rem;
+    color: rgb(250 244 229 / 82%);
+    border: 1px solid rgb(250 244 229 / 18%);
+    border-radius: 999px;
+    font-family: var(--font-mono), monospace;
+    font-size: 0.7rem;
+}
+
+/* Projects */
+
+.projectList {
+    display: grid;
+}
+
+.project {
+    padding: 2rem 0;
+    border-bottom: 1px solid rgb(255 255 255 / 12%);
+}
+
+.project:first-child {
+    padding-top: 0;
+}
+
+.project:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.projectHeader {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+}
+
+.projectNumber {
+    color: var(--accent);
+    font-size: 0.7rem;
+}
+
+.project h3 {
+    margin: 0;
+    font-size: clamp(1.25rem, 2vw, 1.65rem);
+    font-weight: 500;
+}
+
+.project p {
+    max-width: 600px;
+    margin-top: 1rem;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.25rem;
+    color: var(--accent);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* Contact */
+
+.contactContent {
+    max-width: 620px;
+}
+
+.contactLead {
+    color: #faf4e5 !important;
+    font-size: clamp(1.25rem, 2.3vw, 1.8rem) !important;
+    line-height: 1.5 !important;
+}
+
+.contactLinks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2.5rem;
+}
+
+.contactLinks a {
+    display: inline-flex;
+    gap: 1.5rem;
+    justify-content: space-between;
+    min-width: 130px;
+    padding: 0.85rem 1rem;
+
+    color: #faf4e5;
+    border: 1px solid rgb(255 255 255 / 18%);
+    text-decoration: none;
+
+    transition:
+        color 160ms ease,
+        border-color 160ms ease,
+        background-color 160ms ease,
+        transform 160ms ease;
+}
+
+.contactLinks a:hover {
+    color: #07102f;
+    background: var(--accent);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.bottomSpace {
+    height: 30vh;
+}
+
+
+
+
+@media (max-width: 700px) {
+    .hero {
+        min-height: 100svh;
+        padding: 1.5rem;
+    }
+
+    .heroPrimary {
+        bottom: 15%;
+        max-width: 100%;
+    }
+
+    .heroPrimary h1 {
+        font-size: clamp(3rem, 16vw, 5rem);
+    }
+
+    .heroSecondary {
+        top: 2rem;
+        right: 0;
+        transform: none;
+        font-size: 0.65rem;
+    }
+
+    .heroDescription {
+        max-width: 100%;
+    }
+
+    .scrollHint {
+        bottom: 1rem;
+    }
+}
