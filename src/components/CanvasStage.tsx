@@ -20,19 +20,27 @@ export default function CanvasStage() {
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
+        const registry = new PerchRegistry();
+
+        const tree = new FracTree(0.58, window.innerWidth / 2, window.innerHeight, registry);
+        const world: MeshObject[] = [
+            new Rain(500),
+            tree,
+        ];
+
+        const bounds = new Bounds(canvas.height, canvas.width);
+        const Systems: System[] = [];
+        const renderer = new Renderer(ctx, world, Systems);
+
+        renderer.render();
+
         (async () => {
+            try{
+
+            
             const assetImg = await loadImage("ravenTEST.png");
-            const registry = new PerchRegistry();
 
-            const tree = new FracTree(0.58, window.innerWidth / 2, window.innerHeight, registry);
-            const world: MeshObject[] = [
-                new Rain(500),
-                tree,
-            ];
-
-            const bounds = new Bounds(canvas.height, canvas.width);
             const ravenSystem = new RavenSystem(world, assetImg, bounds, registry);
-            const renderer = new Renderer(ctx, world, [ravenSystem]);
 
             const resize = () => {
                 canvas.height = window.innerHeight;
@@ -40,19 +48,23 @@ export default function CanvasStage() {
 
                 bounds.updateBounds(canvas.height, canvas.width);
                 tree.resize(bounds);
-                
+
             }
 
             window.addEventListener("resize", resize);
 
             resize();
+            Systems.push(ravenSystem);
 
             ravenSystem.registerSpawn(ctx);
-            renderer.render();
+            }catch(e){
+                alert("there is a problem with loading the site " + e);
+                console.error(e);
+            }
         })();
 
         return () => {
-          
+
         };
     }, []);
 
