@@ -1,4 +1,3 @@
-'use server'
 import type { ReactNode } from "react";
 import styles from "./Portfolio.module.css";
 

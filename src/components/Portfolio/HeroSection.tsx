@@ -1,7 +1,7 @@
-'use server'
+
 import styles from "./Portfolio.module.css";
 
-export async function HeroSection() {
+export function HeroSection() {
     return (
         <section className={styles.hero}>
             <div className={styles.heroInner}>

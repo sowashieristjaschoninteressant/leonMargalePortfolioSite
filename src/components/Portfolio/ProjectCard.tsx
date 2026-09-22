@@ -1,5 +1,4 @@
 
-
 import styles from "@/src/components/Portfolio/Portfolio.module.css"
 
 type ProjectCardProps = {

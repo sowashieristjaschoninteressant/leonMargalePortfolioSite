@@ -343,10 +343,8 @@ export class FracTree implements MeshObject {
     draw(dt: number) {
         if (!this.ctx)
             return;
-
-        this.ctx.fillText(`Angle: ${this.baseangle}`, 20, 20, 500);
+        
         this.drawGeometry();
-        // this.drawLandingPoints();
     }
 
 }

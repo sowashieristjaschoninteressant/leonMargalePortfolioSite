@@ -1,4 +1,3 @@
-'use server'
 import { HeroSection } from "./HeroSection";
 import { PortfolioSection } from "./PortfolioSection";
 import styles from "./Portfolio.module.css";
