@@ -261,17 +261,20 @@ export class FracTree implements MeshObject {
     private scalePointFromTreeRoot(
         point: point2D
     ): point2D {
-        return {
-            ...point,
+        const verticalScale =
+        this.treescale * (1 - this.compression);
 
-            x:
-                this.xPos +
-                (point.x - this.xPos) * this.treescale,
+    return {
+        ...point,
 
-            y:
-                this.yPos +
-                (point.y - this.yPos) * this.treescale,
-        };
+        x:
+            this.xPos +
+            (point.x - this.xPos) * this.treescale,
+
+        y:
+            this.yPos +
+            (point.y - this.yPos) * verticalScale,
+    };
     }
 
 
@@ -280,15 +283,26 @@ export class FracTree implements MeshObject {
             return;
         }
 
+        const verticalScale =
+            this.treescale * (1 - this.compression);
+
         this.ctx.save();
 
-        // Skalierung erfolgt relativ zur Baumwurzel
         this.ctx.translate(this.xPos, this.yPos);
-        this.ctx.scale(this.treescale, this.treescale);
+
+        this.ctx.scale(
+            this.treescale,
+            verticalScale
+        );
+
         this.ctx.translate(-this.xPos, -this.yPos);
 
         for (const branch of this.branches) {
-            drawLine(this.ctx, branch.start, branch.end);
+            drawLine(
+                this.ctx,
+                branch.start,
+                branch.end
+            );
         }
 
         this.ctx.restore();
@@ -304,8 +318,8 @@ export class FracTree implements MeshObject {
                 break;
             }
 
-           const scaledPosition =
-             this.scalePointFromTreeRoot(branch.end);
+            const scaledPosition =
+                this.scalePointFromTreeRoot(branch.end);
 
             this.perchRegistry.updatePerchPosition(
                 branchIndex,
