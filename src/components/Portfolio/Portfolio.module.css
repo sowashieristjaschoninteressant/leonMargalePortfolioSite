@@ -4,6 +4,50 @@
     color: #f7f4ff;
 }
 
+.heroNavigation {
+   
+    position: absolute;
+    top: clamp(2rem, 8vh, 6rem);
+    right: 0;
+
+    display: flex;
+    flex-direction: column;
+    min-width: 180px;
+
+    font-family: var(--font-mono), monospace;
+}
+
+.heroNavigation a {
+    display: flex;
+    gap: 1.25rem;
+    justify-content: space-between;
+
+    padding: 0.8rem 0;
+
+    color: rgb(250 244 229 / 65%);
+    border-bottom: 1px solid rgb(250 244 229 / 15%);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+
+    transition:
+        color 160ms ease,
+        border-color 160ms ease,
+        transform 160ms ease;
+}
+
+.heroNavigation a span {
+    color: #e5a1aa;
+    font-size: 0.65rem;
+}
+
+.heroNavigation a:hover {
+    color: #faf4e5;
+    border-color: #e5a1aa;
+    transform: translateX(-4px);
+}
+
 .hero {
     position: relative;
     width: 100%;
@@ -75,9 +119,7 @@
     text-decoration: none;
 }
 
-.sectionSpacer {
-    height: 55vh;
-}
+
 
 
 
@@ -241,8 +283,39 @@
 }
 
 .project {
-    padding: 2rem 0;
+    margin-inline: -1rem;
     border-bottom: 1px solid rgb(255 255 255 / 12%);
+}
+
+.projectLink {
+    display: block;
+    padding: 2rem 1rem;
+
+    color: inherit;
+    background: transparent;
+    border-left: 2px solid transparent;
+    text-decoration: none;
+
+    transition:
+        background-color 180ms ease,
+        border-color 180ms ease,
+        transform 180ms ease;
+}
+.projectLink:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+.githubIcon {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+
+    color: rgb(250 244 229 / 45%);
+
+    transition:
+        color 180ms ease,
+        transform 180ms ease;
 }
 
 .project:first-child {
@@ -257,7 +330,85 @@
 .projectHeader {
     display: flex;
     gap: 1rem;
-    align-items: baseline;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.projectTitle h3 {
+    margin: 0;
+    font-size: clamp(1.25rem, 2vw, 1.65rem);
+    font-weight: 500;
+    transition: color 180ms ease;
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .project {
+        transition: none;
+    }
+
+    .project:hover {
+        transform: none;
+    }
+}
+
+@media (hover: hover) {
+    a.projectLink:hover {
+        background-color: color-mix(
+            in srgb,
+            var(--accent) 9%,
+            transparent
+        );
+
+        border-left-color: var(--accent);
+        transform: translateX(5px);
+    }
+
+    a.projectLink:hover .projectTitle h3,
+    a.projectLink:hover .githubIcon {
+        color: var(--accent);
+    }
+
+    a.projectLink:hover .githubIcon {
+        transform: translate(2px, -2px);
+    }
+}
+
+
+.githubLink {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+
+    width: 42px;
+    height: 42px;
+
+    color: rgb(250 244 229 / 65%);
+    border: 1px solid rgb(250 244 229 / 18%);
+    border-radius: 50%;
+
+    transition:
+        color 160ms ease,
+        border-color 160ms ease,
+        background-color 160ms ease,
+        transform 160ms ease;
+}
+
+.githubLink:hover {
+    color: #07102f;
+    background: var(--accent);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.githubLink:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+.projectDescription {
+    max-width: 600px;
+    margin-top: 1rem;
 }
 
 .projectNumber {
@@ -279,11 +430,27 @@
 .tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 1.25rem;
+    gap: 0.6rem;
+
+    margin: 1.25rem 0 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+.tags li {
+    padding: 0.35rem 0.6rem;
+
     color: var(--accent);
+    border: 1px solid color-mix(
+        in srgb,
+        var(--accent) 35%,
+        transparent
+    );
+
+    font-family: var(--font-mono), monospace;
     font-size: 0.65rem;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
 }
 
@@ -335,7 +502,29 @@
     height: 30vh;
 }
 
+@media (max-width: 700px) {
+    .heroNavigation {
+        top: 1.5rem;
+        right: 0;
+        left: 0;
 
+        flex-direction: row;
+        gap: 0.5rem;
+        min-width: 0;
+    }
+
+    .heroNavigation a {
+        flex: 1;
+        gap: 0.4rem;
+        justify-content: flex-start;
+        padding: 0.65rem 0;
+        font-size: 0.6rem;
+    }
+
+    .heroNavigation a:hover {
+        transform: translateY(-2px);
+    }
+}
 
 
 @media (max-width: 700px) {
@@ -366,5 +555,105 @@
 
     .scrollHint {
         bottom: 1rem;
+    }
+}
+
+
+@media (max-width: 700px) {
+    .sectionSpacer {
+        height: 25svh;
+    }
+
+    .section {
+        width: 100%;
+        min-height: 100svh;
+        margin: 0;
+        padding:
+            clamp(4rem, 10vh, 6rem)
+            1.25rem;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        background:
+            linear-gradient(
+                180deg,
+                rgb(6 9 45 / 94%),
+                rgb(13 17 100 / 90%)
+            );
+
+        border-right: 0;
+        border-left: 0;
+        clip-path: none;
+    }
+
+    .left,
+    .right {
+        margin-inline: 0;
+    }
+
+    .sectionHeader {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        padding-bottom: 1.75rem;
+    }
+
+    .sectionNumber {
+        font-size: 0.7rem;
+    }
+
+    .sectionHeading {
+        font-size: clamp(2.5rem, 13vw, 4rem);
+    }
+
+    .sectionContent {
+        padding-top: 2rem;
+    }
+}
+
+@media (max-width: 700px) {
+    .aboutGrid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+
+    .aboutText {
+        gap: 1rem;
+    }
+
+    .sectionContent p {
+        font-size: 0.95rem;
+        line-height: 1.7;
+    }
+}
+
+@media (max-width: 700px) {
+    .project {
+        margin-inline: 0;
+    }
+
+    .projectLink {
+        padding: 1.5rem 0.75rem;
+    }
+
+    .projectTitle {
+        gap: 0.65rem;
+    }
+
+    .projectTitle h3 {
+        font-size: 1.2rem;
+    }
+
+    .projectDescription {
+        font-size: 0.9rem;
+    }
+
+    .tags {
+        gap: 0.4rem;
+    }
+
+    .tags li {
+        font-size: 0.58rem;
     }
 }

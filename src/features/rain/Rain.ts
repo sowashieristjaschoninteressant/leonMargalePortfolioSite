@@ -81,7 +81,7 @@ export class Rain implements MeshObject {
             drop.x += drop.vx * dt;
             drop.y += drop.vy * dt;
 
-            if(drop.y > window.innerHeight + drop.l || drop.x > window.innerWidth - drop.l){
+            if(drop.y > window.innerHeight + drop.l || drop.x > window.innerWidth){
               this.resetDrop(drop)
             }
 

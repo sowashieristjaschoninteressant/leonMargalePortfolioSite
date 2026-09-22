@@ -20,32 +20,39 @@ export default function CanvasStage() {
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
-        const resize = () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        };
-
-        resize();
-        window.addEventListener("resize", resize);
-
         (async () => {
             const assetImg = await loadImage("ravenTEST.png");
             const registry = new PerchRegistry();
+
+            const tree = new FracTree(0.58, window.innerWidth / 2, window.innerHeight, registry);
             const world: MeshObject[] = [
-                new Rain(1000),
-                new FracTree(0.58, window.innerWidth / 2, window.innerHeight, registry),
+                new Rain(500),
+                tree,
             ];
 
             const bounds = new Bounds(canvas.height, canvas.width);
             const ravenSystem = new RavenSystem(world, assetImg, bounds, registry);
             const renderer = new Renderer(ctx, world, [ravenSystem]);
 
+            const resize = () => {
+                canvas.height = window.innerHeight;
+                canvas.width = window.innerWidth;
+
+                bounds.updateBounds(canvas.height, canvas.width);
+                tree.resize(bounds);
+                
+            }
+
+            window.addEventListener("resize", resize);
+
+            resize();
+
             ravenSystem.registerSpawn(ctx);
             renderer.render();
         })();
 
         return () => {
-            window.removeEventListener("resize", resize);
+          
         };
     }, []);
 

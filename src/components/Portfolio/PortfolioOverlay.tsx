@@ -2,6 +2,8 @@
 import { HeroSection } from "./HeroSection";
 import { PortfolioSection } from "./PortfolioSection";
 import styles from "./Portfolio.module.css";
+import { ProjectCard } from "./ProjectCard";
+import { projects } from "@/src/data/projects";
 
 export async function PortfolioOverlay() {
     return (
@@ -26,8 +28,8 @@ export async function PortfolioOverlay() {
                         </p>
 
                         <p>
-                            I’m particularly interested in systems
-                            programming—work where performance,
+                            I’m particularly interested in backend & systems
+                            programming where performance,
                             correctness and understanding what happens
                             beneath an abstraction matter.
                         </p>
@@ -45,9 +47,12 @@ export async function PortfolioOverlay() {
 
                         <ul className={styles.skillList}>
                             <li>C</li>
+                            <li>x68 assembly</li>
                             <li>C++</li>
                             <li>Java</li>
+                            <li>Spring</li>
                             <li>C#</li>
+                            <li>.net</li>
                             <li>TypeScript</li>
                             <li>Linux</li>
                         </ul>
@@ -61,76 +66,21 @@ export async function PortfolioOverlay() {
                 id="work"
                 number="02"
                 label="Selected work"
-                title="Things I’ve built"
+                title="Projects"
                 side="right"
                 accent="blue"
             >
                 <div className={styles.projectList}>
-                    <article className={styles.project}>
-                        <div className={styles.projectHeader}>
-                            <span className={styles.projectNumber}>
-                                01
-                            </span>
+                    {projects.map((project, index) => (
+                        <ProjectCard key={
+                            project.githubUrl ?? project.title}
+                            number={String(index + 1).padStart(2, "0")}
+                            {...project} />
+                    )
+                    )}
 
-                            <h3>HNSW in C</h3>
-                        </div>
 
-                        <p>
-                            Implementation and benchmarking of the
-                            Hierarchical Navigable Small World algorithm
-                            for approximate nearest-neighbour search.
-                        </p>
 
-                        <div className={styles.tags}>
-                            <span>C</span>
-                            <span>Algorithms</span>
-                            <span>Performance</span>
-                        </div>
-                    </article>
-
-                    <article className={styles.project}>
-                        <div className={styles.projectHeader}>
-                            <span className={styles.projectNumber}>
-                                02
-                            </span>
-
-                            <h3>Systems Programming</h3>
-                        </div>
-
-                        <p>
-                            Extensions for xv6, an LC-3 virtual machine
-                            in C++ and experiments with Windows kernel
-                            development through a KMDF driver.
-                        </p>
-
-                        <div className={styles.tags}>
-                            <span>C/C++</span>
-                            <span>xv6</span>
-                            <span>Kernel</span>
-                        </div>
-                    </article>
-
-                    <article className={styles.project}>
-                        <div className={styles.projectHeader}>
-                            <span className={styles.projectNumber}>
-                                03
-                            </span>
-
-                            <h3>Interactive Portfolio</h3>
-                        </div>
-
-                        <p>
-                            A custom Canvas environment with procedural
-                            tree generation, autonomous ravens, state
-                            machines and exclusive perch allocation.
-                        </p>
-
-                        <div className={styles.tags}>
-                            <span>TypeScript</span>
-                            <span>Canvas</span>
-                            <span>Simulation</span>
-                        </div>
-                    </article>
                 </div>
             </PortfolioSection>
 
@@ -157,13 +107,13 @@ export async function PortfolioOverlay() {
                     </p>
 
                     <div className={styles.contactLinks}>
-                        <a href="mailto:YOUR_EMAIL">
+                        <a href="mailto:leon@margale.de">
                             Email
                             <span aria-hidden="true">↗</span>
                         </a>
 
                         <a
-                            href="YOUR_GITHUB_URL"
+                            href="https://github.com/sowashieristjaschoninteressant"
                             target="_blank"
                             rel="noreferrer"
                         >
@@ -172,7 +122,7 @@ export async function PortfolioOverlay() {
                         </a>
 
                         <a
-                            href="YOUR_LINKEDIN_URL"
+                            href="https://www.linkedin.com/in/leon-margale-881660235/"
                             target="_blank"
                             rel="noreferrer"
                         >

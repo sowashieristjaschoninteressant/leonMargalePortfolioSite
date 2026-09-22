@@ -13,20 +13,35 @@ export async function HeroSection() {
                     <h1>Leon Margale</h1>
 
                     <p className={styles.heroDescription}>
-                        I build performance-minded software, explore
+                        I like to build backend architectures, performance software, exploring
                         systems programming and occasionally make ravens
                         land in procedurally generated trees.
                     </p>
                 </div>
 
-                <div className={styles.heroSecondary}>
-                    <span>Systems Programming</span>
-                    <span>Sailor</span>
-                </div>
-
                 <a className={styles.scrollHint} href="#about">
                     Explore ↓
                 </a>
+
+                 <nav
+                    className={styles.heroNavigation}
+                    aria-label="Portfolio navigation"
+                >
+                    <a href="#about">
+                        <span>01</span>
+                        About me
+                    </a>
+
+                    <a href="#work">
+                        <span>02</span>
+                        Projects
+                    </a>
+
+                    <a href="#contact">
+                        <span>03</span>
+                        Get in touch
+                    </a>
+                </nav>
             </div>
         </section>
     );

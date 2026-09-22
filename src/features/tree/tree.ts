@@ -2,6 +2,7 @@ import { drawLine, calculateNewPoint } from "@/src/engine/draw";
 import { MeshObject, point2D } from "@/src/engine/types";
 
 import { IPerchProvider, Perch } from "./IPerchProvider";
+import { Bounds } from "@/src/engine/bounds";
 
 type Branch = {
     start: point2D;
@@ -19,12 +20,12 @@ export class FracTree implements MeshObject {
     bend: number = 0.1;
     direction: boolean = true;
     firstLineL: number = 10;
-    currentLineLength: number[] = [];
-    branches: Branch[] = [];
-    allPoints: point2D[] = [];
+    private currentLineLength: number[] = [];
+    private branches: Branch[] = [];
+    private allPoints: point2D[] = [];
     private perchRegistry: IPerchProvider;
     private perchesRegistered: boolean = false;
-
+    private treescale: number = 1;
     // tree stuff fck
     private LEVEL_COUNT = 12;
     private MAX_TRUNK_LENGTH = 300;
@@ -243,27 +244,47 @@ export class FracTree implements MeshObject {
         }
     }
 
-    drawLandingPoints() {
-        for (const point of this.allPoints) {
-            this.ctx!.beginPath();
-            this.ctx!.arc(point.x, point.y, 4, 0, Math.PI * 2);
-            this.ctx!.fillStyle = "red";
-            this.ctx!.fill();
-        }
+    resize(bounds: Bounds) {
+        this.xPos = bounds.width / 2;
+        this.yPos = bounds.height;
+
+        const widthScale = bounds.width / 900;
+        const heightScale = bounds.height / 800;
+
+        this.treescale = Math.max(
+            0.4,
+            Math.min(1, widthScale, heightScale)
+        );
+
     }
+
+    private scalePointFromTreeRoot(
+        point: point2D
+    ): point2D {
+        return {
+            ...point,
+
+            x:
+                this.xPos +
+                (point.x - this.xPos) * this.treescale,
+
+            y:
+                this.yPos +
+                (point.y - this.yPos) * this.treescale,
+        };
+    }
+
 
     private drawGeometry(): void {
         if (!this.ctx) {
             return;
         }
 
-        const verticalScale = 1 - this.compression;
-
         this.ctx.save();
 
         // Skalierung erfolgt relativ zur Baumwurzel
         this.ctx.translate(this.xPos, this.yPos);
-        this.ctx.scale(1, verticalScale);
+        this.ctx.scale(this.treescale, this.treescale);
         this.ctx.translate(-this.xPos, -this.yPos);
 
         for (const branch of this.branches) {
@@ -283,15 +304,12 @@ export class FracTree implements MeshObject {
                 break;
             }
 
-            const transformedPosition: point2D = {
-                ...branch.end,
-                y: this.yPos +
-                    (branch.end.y - this.yPos) * verticalScale
-            };
+           const scaledPosition =
+             this.scalePointFromTreeRoot(branch.end);
 
             this.perchRegistry.updatePerchPosition(
                 branchIndex,
-                transformedPosition
+                scaledPosition
             );
         }
     }
