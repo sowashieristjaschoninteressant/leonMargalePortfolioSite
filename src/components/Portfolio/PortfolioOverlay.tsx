@@ -46,7 +46,6 @@ export async function PortfolioOverlay() {
 
                         <ul className={styles.skillList}>
                             <li>C</li>
-                            <li>x68 assembly</li>
                             <li>C++</li>
                             <li>Java</li>
                             <li>Spring</li>

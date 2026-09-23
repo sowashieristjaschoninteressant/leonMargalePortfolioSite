@@ -31,18 +31,8 @@ export default function CanvasStage() {
         const bounds = new Bounds(canvas.height, canvas.width);
         const Systems: System[] = [];
         const renderer = new Renderer(ctx, world, Systems);
-
-        renderer.render();
-
-        (async () => {
-            try{
-
-            
-            const assetImg = await loadImage("ravenTEST.png");
-
-            const ravenSystem = new RavenSystem(world, assetImg, bounds, registry);
-
-            const resize = () => {
+        
+        const resize = () => {
                 canvas.height = window.innerHeight;
                 canvas.width = window.innerWidth;
 
@@ -51,9 +41,17 @@ export default function CanvasStage() {
 
             }
 
-            window.addEventListener("resize", resize);
+        window.addEventListener("resize", resize);
 
-            resize();
+        resize();
+        renderer.render();
+
+
+        (async () => {
+            try{
+
+            const assetImg = await loadImage("ravenTEST.png");
+            const ravenSystem = new RavenSystem(world, assetImg, bounds, registry);
             Systems.push(ravenSystem);
 
             ravenSystem.registerSpawn(ctx);
