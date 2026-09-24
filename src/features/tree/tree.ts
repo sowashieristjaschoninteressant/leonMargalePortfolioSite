@@ -64,16 +64,6 @@ export class FracTree implements MeshObject {
     private incAngle(angle: number, baseangle: number, bend: number) { return angle + baseangle + bend };
     private decAngle(angle: number, baseangle: number, bend: number) { return angle - baseangle - bend };
 
-    allLinesDone() {
-        for (let i = 0; i < this.currentLineLength.length; i++) {
-            if (this.currentLineLength[i] < this.getTargetLength(i)) {
-                return false;
-            }
-        }
-        return true;
-
-    }
-
     getTargetLength(level: number) {
         return this.INITIAL_BRANCH_LENGTH * Math.pow(this.BRANCH_SCALE, level);
     }

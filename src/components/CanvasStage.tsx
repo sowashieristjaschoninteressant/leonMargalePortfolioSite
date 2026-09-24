@@ -24,7 +24,7 @@ export default function CanvasStage() {
 
         const tree = new FracTree(0.58, window.innerWidth / 2, window.innerHeight, registry);
         const world: MeshObject[] = [
-            new Rain(500),
+            new Rain(250),
             tree,
         ];
 

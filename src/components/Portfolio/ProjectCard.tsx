@@ -10,7 +10,6 @@ type ProjectCardProps = {
 };
 
 export function ProjectCard({
-    number,
     title,
     description,
     tags,
@@ -21,9 +20,6 @@ export function ProjectCard({
         <>
             <div className={styles.projectHeader}>
                 <div className={styles.projectTitle}>
-                    <span className={styles.projectNumber}>
-                        {number}
-                    </span>
 
                     <h3>{title}</h3>
                 </div>

@@ -22,9 +22,9 @@ export class Rain implements MeshObject {
         this.drops = [];
         this.DROP_COUNT = count;
         
-        this.WIND_VELOCITY = 12;
-        this.DROP_MIN_VELOCITY = 9.8;
-        this.DROP_MAX_VELOCITY = 14.2;
+        this.WIND_VELOCITY = 8;
+        this.DROP_MIN_VELOCITY = 6;
+        this.DROP_MAX_VELOCITY = 8;
 
         this.DROP_MIN_LENGTH = 20;
         this.DROP_MAX_LENGTH = 40;

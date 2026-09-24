@@ -13,7 +13,6 @@ export async function PortfolioOverlay() {
 
             <PortfolioSection
                 id="about"
-                number="01"
                 label="About"
                 title="Behind the code"
                 side="left"
@@ -62,7 +61,6 @@ export async function PortfolioOverlay() {
 
             <PortfolioSection
                 id="work"
-                number="02"
                 label="Selected work"
                 title="Projects"
                 side="right"
@@ -86,7 +84,6 @@ export async function PortfolioOverlay() {
 
             <PortfolioSection
                 id="contact"
-                number="03"
                 label="Contact"
                 title="Let’s talk"
                 side="left"

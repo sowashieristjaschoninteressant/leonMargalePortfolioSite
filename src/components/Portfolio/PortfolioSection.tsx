@@ -3,7 +3,6 @@ import styles from "./Portfolio.module.css";
 
 type PortfolioSectionProps = {
     id: string;
-    number: string;
     label: string;
     title: string;
     side: "left" | "right";
@@ -24,7 +23,6 @@ const accentClasses = {
 
 export async function PortfolioSection({
     id,
-    number,
     label,
     title,
     side,
@@ -41,9 +39,6 @@ export async function PortfolioSection({
             ].join(" ")}
         >
             <header className={styles.sectionHeader}>
-                <span className={styles.sectionNumber}>
-                    {number}
-                </span>
 
                 <div>
                     <p className={styles.sectionLabel}>

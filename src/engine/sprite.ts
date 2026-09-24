@@ -16,8 +16,6 @@ export class Sprite{
         this.animationTime = animationDelay;
         this.img = img;
         
-        
-
     };
 
     setReverse(isReverse:boolean){

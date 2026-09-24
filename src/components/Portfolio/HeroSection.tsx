@@ -28,17 +28,17 @@ export function HeroSection() {
                     aria-label="Portfolio navigation"
                 >
                     <a href="#about">
-                        <span>01</span>
+                       
                         About me
                     </a>
 
                     <a href="#work">
-                        <span>02</span>
+                       
                         Projects
                     </a>
 
                     <a href="#contact">
-                        <span>03</span>
+                        
                         Get in touch
                     </a>
                 </nav>
