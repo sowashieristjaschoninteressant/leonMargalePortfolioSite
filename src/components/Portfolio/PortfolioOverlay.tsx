@@ -3,6 +3,7 @@ import { PortfolioSection } from "./PortfolioSection";
 import styles from "./Portfolio.module.css";
 import { ProjectCard } from "./ProjectCard";
 import { projects } from "@/src/data/projects";
+import { ExternalLinkIcon } from "../icons/externalLinkIcon";
 
 export async function PortfolioOverlay() {
     return (
@@ -42,6 +43,7 @@ export async function PortfolioOverlay() {
                         <p className={styles.contentLabel}>
                             Technologies
                         </p>
+                        
 
                         <ul className={styles.skillList}>
                             <li>C</li>
@@ -103,8 +105,8 @@ export async function PortfolioOverlay() {
 
                     <div className={styles.contactLinks}>
                         <a href="mailto:leon@margale.de">
-                            Email
-                            <span aria-hidden="true">↗</span>
+                            <span>Email</span>
+                            <ExternalLinkIcon/>
                         </a>
 
                         <a
@@ -112,8 +114,8 @@ export async function PortfolioOverlay() {
                             target="_blank"
                             rel="noreferrer"
                         >
-                            GitHub
-                            <span aria-hidden="true">↗</span>
+                            <span>GitHub</span>
+                            <ExternalLinkIcon/>
                         </a>
 
                         <a
@@ -121,8 +123,8 @@ export async function PortfolioOverlay() {
                             target="_blank"
                             rel="noreferrer"
                         >
-                            LinkedIn
-                            <span aria-hidden="true">↗</span>
+                            <span>LinkedIn</span>
+                            <ExternalLinkIcon/>
                         </a>
                     </div>
                 </div>
