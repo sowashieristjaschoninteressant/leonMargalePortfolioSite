@@ -129,6 +129,7 @@ export async function PortfolioOverlay() {
             </PortfolioSection>
 
             <div className={styles.bottomSpace} />
+            
         </div>
     );
 }

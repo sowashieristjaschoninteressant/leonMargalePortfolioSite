@@ -2,6 +2,7 @@ import { MeshObject, point2D } from "@/src/engine/types";
 import { drawLine } from "@/src/engine/draw";
 import { getRandomInt, lerp, vec2Normalize, vec2scale } from "@/src/shared/math";
 import { Drop } from "./types";
+import { Bounds } from "@/src/engine/bounds";
 
 export class Rain implements MeshObject {
 
@@ -16,21 +17,23 @@ export class Rain implements MeshObject {
     DROP_MAX_LENGTH: number;
     DROP_MIN_ALPHA: number;
     DROP_MAX_ALPHA: number;
+    private readonly HORIZONTAL_DRIFT = 0.33;
+    private bounds:Bounds;
 
-    constructor(count: number){ 
+    constructor(count: number, bounds:Bounds){ 
         this.ctx = null;
         this.drops = [];
         this.DROP_COUNT = count;
         
-        this.WIND_VELOCITY = 8;
-        this.DROP_MIN_VELOCITY = 6;
-        this.DROP_MAX_VELOCITY = 8;
+        this.WIND_VELOCITY = 5;
+        this.DROP_MIN_VELOCITY = 9;
+        this.DROP_MAX_VELOCITY = 15;
 
         this.DROP_MIN_LENGTH = 20;
         this.DROP_MAX_LENGTH = 40;
         this.DROP_MIN_ALPHA = 0.3;
         this.DROP_MAX_ALPHA = 1;
-
+        this.bounds = bounds;
         this.initializeDrops();
     }
 
@@ -38,8 +41,8 @@ export class Rain implements MeshObject {
         return {
             x: 0,
             y: 0,
-            vx: 0,
-            vy: 0,
+            vx:0,
+            vy:0,
             l: 0,
             a: 0,
         };
@@ -54,24 +57,33 @@ export class Rain implements MeshObject {
             let drop:Drop = this.createDrop();
 
             this.resetDrop(drop);
-            drop.y = getRandomInt(0, window.innerHeight);
+            drop.y = getRandomInt(0, this.bounds.height);
 
             this.drops.push(drop);
         }
+    }
 
+    private getHorizontalTail(drop:Drop){
+        const directionLength = Math.hypot(drop.vx, drop.vy);
+
+        return Math.abs(drop.vx / directionLength) * drop.l;;
     }
 
     resetDrop(drop:Drop): void {
-        let scale = Math.random();
+        const scale = Math.random();
 
-        drop.x = getRandomInt(-(window.innerWidth / 2), window.innerWidth);
-        drop.vx = this.WIND_VELOCITY;
         drop.vy = lerp(this.DROP_MIN_VELOCITY, this.DROP_MAX_VELOCITY, scale);
+        drop.vx = drop.vy * (this.bounds.width / this.bounds.height) * this.HORIZONTAL_DRIFT;
         drop.l = lerp(this.DROP_MIN_LENGTH, this.DROP_MAX_LENGTH, scale);
         drop.a = lerp(this.DROP_MIN_ALPHA, this.DROP_MAX_ALPHA, scale);
+        
+        const horizontalTail = this.getHorizontalTail(drop);
+        const padding = 400;
+        drop.x = getRandomInt(-horizontalTail - padding, this.bounds.width + horizontalTail);
         drop.y = getRandomInt(-drop.l, 0);
 
     }
+
     update(dt:number){
         return;
     }
@@ -81,11 +93,10 @@ export class Rain implements MeshObject {
             drop.x += drop.vx * dt;
             drop.y += drop.vy * dt;
 
-            if(drop.y > window.innerHeight + drop.l || drop.x > window.innerWidth){
+            if(drop.y > this.bounds.height + drop.l || drop.x > this.bounds.width){
               this.resetDrop(drop)
             }
-
-            return 
+            return;
     }
 
     setupCTX(){
@@ -109,9 +120,9 @@ export class Rain implements MeshObject {
         
         for(let i = 0; i < this.drops.length; i++){
 
-            var drop = this.drops[i];
+            const drop = this.drops[i];
 
-            this.updateInner(drop,1);
+            this.updateInner(drop, dt * 60);
 
             let x1 = Math.round(this.drops[i].x);
             let y1 = Math.round(this.drops[i].y);

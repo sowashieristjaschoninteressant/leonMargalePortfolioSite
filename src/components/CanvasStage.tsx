@@ -20,15 +20,19 @@ export default function CanvasStage() {
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+        
+        const bounds = new Bounds(canvas.height, canvas.width);
+        
         const registry = new PerchRegistry();
-
-        const tree = new FracTree(0.58, window.innerWidth / 2, window.innerHeight, registry);
+        
+        const tree = new FracTree(0.58, bounds.width / 2, bounds.height, registry);
         const world: MeshObject[] = [
-            new Rain(250),
+            new Rain(250,bounds),
             tree,
         ];
 
-        const bounds = new Bounds(canvas.height, canvas.width);
         const Systems: System[] = [];
         const renderer = new Renderer(ctx, world, Systems);
         
