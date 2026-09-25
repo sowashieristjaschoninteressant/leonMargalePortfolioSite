@@ -199,21 +199,31 @@ export class Bird implements MeshObject {
 
         const dx = targetPos.x - currentPos.x;
         const dy = targetPos.y - currentPos.y;
+        const distance = Math.hypot(dx,dy);
 
-        const Dlen = Math.sqrt((dx * dx) + (dy * dy));
+        const step = this.velocity * dt;
+        
+        if(Math.abs(dx) > this.epsilon){
+            this.sprite?.setReverse(dx < 0);
+        }
+        
+        if (distance <= this.epsilon || step >= distance ) {
 
-        dx < 0 ? this.sprite?.setReverse(true) : this.sprite?.setReverse(false);
+            this.x = targetPos.x;
+            this.y = targetPos.y;
 
-        if (Dlen < this.epsilon) {
             this.motionState.hasGoal = false;
-            this.motionState.goalPoint = { x: 0, y: 0 };
+            this.motionState.goalPoint = null;
             return;
         }
 
-        const norm: point2D = { x: dx / Dlen, y: dy / Dlen };
+        const norm: point2D = { x: dx / distance, y: dy / distance };
 
         this.x += norm.x * this.velocity * dt;
         this.y += norm.y * this.velocity * dt;
+
+
+        
 
     }
 

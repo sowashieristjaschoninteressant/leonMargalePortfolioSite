@@ -150,7 +150,7 @@ export class FracTree implements MeshObject {
         this.perchesRegistered = true;
     }
 
-    private rebuildGeometry(baseangle: number): void {
+    private     rebuildGeometry(baseangle: number): void {
         this.branches.length = 0;
         this.allPoints.length = 0;
 
@@ -309,7 +309,6 @@ export class FracTree implements MeshObject {
     }
 
     private updatePerchPositions(): void {
-        const verticalScale = 1 - this.compression;
 
         for (let branchIndex = 0; branchIndex < 20; branchIndex++) {
             const branch = this.branches[branchIndex];
@@ -342,7 +341,12 @@ export class FracTree implements MeshObject {
             this.registerPerches();
         }
 
-        this.updatePerchPositions();
+        // must run every frame since the tree is shaking sometimes.
+        if(this.perchesRegistered){
+             this.updatePerchPositions();
+        }
+
+        
     }
 
     draw(dt: number) {
