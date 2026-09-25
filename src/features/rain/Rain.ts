@@ -78,8 +78,8 @@ export class Rain implements MeshObject {
         drop.a = lerp(this.DROP_MIN_ALPHA, this.DROP_MAX_ALPHA, scale);
         
         const horizontalTail = this.getHorizontalTail(drop);
-        const padding = 400;
-        drop.x = getRandomInt(-horizontalTail - padding, this.bounds.width + horizontalTail);
+        const paddingScaling = 0.3;
+        drop.x = getRandomInt(-horizontalTail - (paddingScaling * this.bounds.width), this.bounds.width + horizontalTail);
         drop.y = getRandomInt(-drop.l, 0);
 
     }
@@ -117,8 +117,11 @@ export class Rain implements MeshObject {
             return
         
         this.setupCTX();
+
+          let start:point2D = {x:0,y: 0, angle : 0};
+          let end:point2D = {x:0,y: 0, angle : 0};
         
-        for(let i = 0; i < this.drops.length; i++){
+          for(let i = 0; i < this.drops.length; i++){
 
             const drop = this.drops[i];
 
@@ -138,10 +141,15 @@ export class Rain implements MeshObject {
 
             this.ctx.globalAlpha = drop.a;
 
-            let start:point2D = {x:x1,y: y1, angle : 0};
-            let end:point2D = {x:x2,y: y2, angle : 0};
-            drawLine(this.ctx, start, end );
+             start.x = x1;
+             start.y = y1;
+             
+             end.x = x2;
+             end.y = y2;
+             
 
+
+            drawLine(this.ctx, start, end );
         }
         
         this.ctx.restore();

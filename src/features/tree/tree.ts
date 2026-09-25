@@ -1,7 +1,6 @@
-import { drawLine, calculateNewPoint } from "@/src/engine/draw";
+import { drawLineBase, calculateNewPoint } from "@/src/engine/draw";
 import { MeshObject, point2D } from "@/src/engine/types";
-
-import { IPerchProvider, Perch } from "./IPerchProvider";
+import { IPerchProvider} from "./IPerchProvider";
 import { Bounds } from "@/src/engine/bounds";
 
 type Branch = {
@@ -36,7 +35,7 @@ export class FracTree implements MeshObject {
 
     private compression = 0;
     private compressionVelocity = 0;
-
+    private geometryDirty = true;
     private readonly SPRING_STRENGTH = 90;
     private readonly SPRING_DAMPING = 10;
     private readonly IMPACT_STRENGTH = 0.12;
@@ -104,30 +103,36 @@ export class FracTree implements MeshObject {
         );
     }
 
-    private updateGrowth(): void {
-        if (this.firstLineL < this.MAX_TRUNK_LENGTH) {
-            this.firstLineL = Math.min(
-                this.firstLineL + this.TRUNK_GROTH_STEP,
-                this.MAX_TRUNK_LENGTH
+    private updateGrowth(): boolean {
+    if (this.firstLineL < this.MAX_TRUNK_LENGTH) {
+        this.firstLineL = Math.min(
+            this.firstLineL + this.TRUNK_GROTH_STEP,
+            this.MAX_TRUNK_LENGTH
+        );
+
+        return true;
+    }
+
+    for (let level = 0; level < this.LEVEL_COUNT; level++) {
+        const targetLength =
+            this.getTargetLength(level);
+
+        if (
+            this.currentLineLength[level] <
+            targetLength
+        ) {
+            this.currentLineLength[level] = Math.min(
+                this.currentLineLength[level] +
+                    this.BRANCH_GROWTH_STEP,
+                targetLength
             );
 
-            return;
-        }
-
-        for (let level = 0; level < this.LEVEL_COUNT; level++) {
-            const targetLength = this.getTargetLength(level);
-
-            if (this.currentLineLength[level] < targetLength) {
-                this.currentLineLength[level] = Math.min(
-                    this.currentLineLength[level] + this.BRANCH_GROWTH_STEP,
-                    targetLength
-                );
-
-                // Nur eine Ebene pro Frame wachsen lassen
-                return;
-            }
+            return true;
         }
     }
+
+    return false;
+}
 
     private registerPerches() {
 
@@ -240,7 +245,9 @@ export class FracTree implements MeshObject {
 
         const widthScale = bounds.width / 900;
         const heightScale = bounds.height / 800;
-
+        
+        this.geometryDirty = true;
+        
         this.treescale = Math.max(
             0.4,
             Math.min(1, widthScale, heightScale)
@@ -286,14 +293,17 @@ export class FracTree implements MeshObject {
         );
 
         this.ctx.translate(-this.xPos, -this.yPos);
+        this.ctx.beginPath();
 
         for (const branch of this.branches) {
-            drawLine(
+            drawLineBase(
                 this.ctx,
                 branch.start,
                 branch.end
             );
         }
+
+        this.ctx.stroke();
 
         this.ctx.restore();
     }
@@ -319,9 +329,14 @@ export class FracTree implements MeshObject {
     }
 
     update(dt: number) {
-        this.updateGrowth();
+        const geometryChanged = this.updateGrowth();
+        
         this.updateReaction(dt);
-        this.rebuildGeometry(this.baseangle);
+
+        if(geometryChanged || this.geometryDirty){
+            this.rebuildGeometry(this.baseangle);
+            this.geometryDirty = false;
+        }
 
         if (this.isfullyGrown() && !this.perchesRegistered) {
             this.registerPerches();
